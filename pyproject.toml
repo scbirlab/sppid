@@ -1,0 +1,60 @@
+[project]
+name = "sppid"
+version = "0.0.1"
+authors = [
+  { name="Eachan Johnson", email="eachan.johnson@crick.ac.uk" },
+]
+description = "Predicting protein-protein interactions using AlphaFold2."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+keywords = ["science", "biology", "systems biology", "biochemistry", "machine learning", "analysis", "deep learning", "alphafold2"]
+
+classifiers = [  
+  
+  "Development Status :: 3 - Alpha",
+
+  # Indicate who your project is intended for
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Biology",
+
+  "License :: OSI Approved :: MIT License",
+
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3 :: Only",
+]
+
+dependencies = [ 
+  "absl-py",
+  "bioino",
+  "biopython==1.79",
+  "carabiner-tools",
+  "dm-haiku==0.0.12",
+  "dm-tree",
+  "openpyxl==3.1.0", 
+  "ml-collections==0.1.0",
+  "pandas",
+  "tensorflow-cpu==2.16.1",
+  "tqdm"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/scbirlab/sppid"
+"Bug Tracker" = "https://github.com/scbirlab/sppid/issues"
+
+[project.scripts]  # Optional
+sppid = "sppid.cli:main"
+
+[tool.setuptools]
+# If there are data files included in your packages that need to be
+# installed, specify them here.
+# package-data = {"sppid" = "data/params/params_model_1.npz"}
+
+[build-system]
+# These are the assumed default build requirements from pip:
+# https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
+requires = ["setuptools>=43.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
