@@ -5,8 +5,6 @@ from typing import Optional
 import os
 from time import time
 
-from .src_speedppi.alphafold.model import config, data, model
-
 _params_path = os.path.join(os.path.dirname(__file__), "data")
 
 def make_model_runner(num_ensemble: int = 1,
@@ -17,6 +15,7 @@ def make_model_runner(num_ensemble: int = 1,
     """Generate an AlphaFold2 model runner.
 
     """
+    from .src_speedppi.alphafold.model import config, data, model
 
     if model_name is None:
         model_name = 'model_1'

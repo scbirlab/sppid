@@ -5,18 +5,93 @@ __version__ = '0.0.1'
 from typing import Any, Mapping, Optional, Tuple, Union
 
 from argparse import ArgumentParser, FileType, Namespace
+from io import TextIOWrapper
+import os
 import sys
 
 from carabiner import print_err
+from carabiner.cast import cast, flatten
 from carabiner.cliutils import clicommand, CLIOption, CLICommand, CLIApp
 
 from .io import write_metrics
-from .screening import build_evaluate_and_save_model, many_vs_many
+from .plots import plot_matrix
+from .screening import build_evaluate_and_save_model, dca_one_vs_many, dca_many_vs_many, model_many_vs_many, rf2track_one_vs_many
+
+def _load_msa_list(*args):
+    args = [flatten(a) for a in args]
+    return ([line.strip() for line in cast(msa, to=TextIOWrapper)] for msa in args)
+
+
+def _plot_results(results, result_interaction, metric, output_dir: str = '.') -> None:
+    filename_prefix = os.path.join(output_dir, metric.ID)
+    if hasattr(metric, 'apc'):
+        apc = metric.apc
+        filename_prefix += f"{apc=}"    
+    plot_matrix(results, filename_prefix=filename_prefix)
+    plot_matrix(result_interaction, filename_prefix=filename_prefix + ".interaction")
+    return None
+
+
+@clicommand(message="Making RosettaFold-2track prediction with the following parameters.")
+def _rf2t_single(args: Namespace) -> None:
+
+    outputs = rf2track_one_vs_many(
+        msa_file1=args.msa1,
+        msa_file2=args.msa2,
+    )
+    metrics = [_output[-1] for _output in outputs]
+    write_metrics(metrics, 
+                  filename=args.output)
+    if args.plot is not None:
+        for _output in outputs:
+            _plot_results(*_output, output_dir=args.plot)
+
+    return None
 
 
 
-@clicommand(message="Testing one PPI with the following parameters")
-def _single(args: Namespace) -> None:
+@clicommand(message="Calculating DCA for a pair of MSAs with the following parameters")
+def _dca_single(args: Namespace) -> None:
+
+    outputs = dca_one_vs_many(
+        msa_file1=args.msa1,
+        msa_file2=args.msa2,
+        apc=args.apc,
+    )
+    metrics = [_output[-1] for _output in outputs]
+    write_metrics(metrics, 
+                  filename=args.output)
+    if args.plot is not None:
+        for _output in outputs:
+            _plot_results(*_output, output_dir=args.plot)
+
+    return None
+
+
+@clicommand(message="Calculating DCA between pairs of MSAs with the following parameters")
+def _dca_many_vs_many(args: Namespace) -> None:
+
+    if args.list_file:
+        msa1, msa2 = _load_msa_list(args.msa1, args.msa2)
+
+    outputs = dca_many_vs_many(
+        msa_files1=msa1,
+        msa_files2=msa2,
+        apc=args.apc,
+    )
+
+    metrics = [_output[-1] for _output in outputs]
+    write_metrics(metrics, 
+                  filename=args.output)
+    if args.plot is not None:
+        for _output in outputs:
+            _plot_results(*_output, output_dir=args.plot)
+
+    return None
+
+
+@clicommand(message="Modelling one PPI with the following parameters")
+def _af2_single(args: Namespace) -> None:
 
     metric = build_evaluate_and_save_model(
         msa_file1=args.msa1,
@@ -34,12 +109,15 @@ def _single(args: Namespace) -> None:
     return None
 
 
-@clicommand(message="Testing sets of PPIs with the following parameters")
-def _many_vs_many(args: Namespace) -> None:
+@clicommand(message="Modelling sets of PPIs with the following parameters")
+def _af2_many_vs_many(args: Namespace) -> None:
 
-    metrics = many_vs_many(
-        msa_files1=args.msa1,
-        msa_files2=args.msa2,
+    if args.list_file:
+        msa1, msa2 = _load_msa_list(args.msa1, args.msa2)
+
+    metrics = model_many_vs_many(
+        msa_files1=msa1,
+        msa_files2=msa2,
         output_dir=args.output,
         max_recycles=args.recycles,
         param_dir=args.params,
@@ -58,7 +136,7 @@ def main() -> None:
                        default=sys.stdin,
                        type=FileType('r'), 
                        nargs='?',
-                       help='MSA file.')
+                       help='MSA file. Default: STDIN.')
     input2 = CLIOption('--msa2', '-2', 
                        type=FileType('r'), 
                        default=None,
@@ -73,10 +151,26 @@ def main() -> None:
                         default=None,
                         nargs='*',
                         help='Second MSA file(s). Default: if not provided, all pairwise from msa1.')
+    list_file = CLIOption('--list-file', '-l', 
+                          action='store_true',
+                          help='Treat inputs as plain-text list of MSA files, rather than MSA filenames. '
+                               'Default: treat as MSA filenames.')
     output = CLIOption('--output', '-o', 
                        type=str,
                        required=True,
                        help='Output directory.')
+    plot = CLIOption('--plot', '-p', 
+                     type=str,
+                     default=None,
+                     help='Directory for saving plots. Default: don\'t plot.')
+    output_file = CLIOption('--output', '-o', 
+                            default=sys.stdout,
+                            type=FileType('w'), 
+                            nargs='?',
+                            help='Output filename. Default: STDOUT.')
+    apc = CLIOption('--apc', '-a', 
+                    action='store_true',
+                    help='Whether to use APC correction in DCA. Default: don\'t apply correction.')
     params = CLIOption('--params', '-p', 
                        type=str,
                        default=None,
@@ -86,19 +180,31 @@ def main() -> None:
                        default=10,
                        help='Maximum number of recyles through the model.')
 
-    single = CLICommand('single', 
-                        description='Identify one protein-protein interaction.',
-                        main=_single,
-                        options=[inputs, input2, output, params, recycles])
-    set_vs_set = CLICommand('many', 
-                            description='Measure all interactions between two sets of proteins, or all pairs in one set of proteins.',
-                            main=_many_vs_many,
-                            options=[inputs_list, inputs_list2, output, params, recycles])
+    rf2t_single = CLICommand('rf2t-single', 
+                            description='Calculate RF-2track contacts for between one protein and a series of others.',
+                            main=_rf2t_single,
+                            options=[inputs, input2, output_file, plot])
+    dca_single = CLICommand('dca-single', 
+                            description='Calculate DCA for one protein-protein interaction.',
+                            main=_dca_single,
+                            options=[inputs, input2, apc, output_file, plot])
+    dca_many = CLICommand('dca-many', 
+                          description='Calculate DCA between two sets of proteins, or all pairs in one set of proteins.',
+                          main=_dca_many_vs_many,
+                          options=[inputs_list, inputs_list2, list_file, apc, output_file, plot])
+    af2_single = CLICommand('af2-single', 
+                            description='Model one protein-protein interaction.',
+                            main=_af2_single,
+                            options=[inputs, input2, output, params, recycles])
+    af2_many = CLICommand('af2-many', 
+                          description='Model all interactions between two sets of proteins, or all pairs in one set of proteins.',
+                          main=_af2_many_vs_many,
+                          options=[inputs_list, inputs_list2, list_file, output, params, recycles])
 
     app = CLIApp("sppid",
                  version=__version__,
-                 description="Predicting protein-protein interactions using AlphaFold2.",
-                 commands=[single, set_vs_set])
+                 description="Screening protein-protein interactions using DCA and AlphaFold2.",
+                 commands=[dca_single, dca_many, rf2t_single, af2_single, af2_many])
 
     app.run()
     return None
