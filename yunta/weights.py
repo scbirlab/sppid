@@ -12,7 +12,7 @@ from tqdm.auto import tqdm
 _WEIGHTS_URL = "https://storage.googleapis.com/alphafold/alphafold_params_2021-07-14.tar"
 
 def get_model_weights(model_name: Optional[str] = None,
-                      path: Optional[str] = None):
+                      path: Optional[str] = None) -> str:
 
     """Get the model weights filename.
     
@@ -49,7 +49,7 @@ def get_model_weights(model_name: Optional[str] = None,
             print_err(f"Extracting weights from {temp_file} to {weight_dir}...")
             tar.extractall(path=weight_dir, members=files_to_keep, filter='data')
         tardir = os.path.join(weight_dir, "weights")
-        os.remove(tempfile)
+        os.remove(temp_file)
         for filename in files_to_keep:
             source = os.path.join(tardir, filename)
             destination = os.path.join(weight_dir, filename)
