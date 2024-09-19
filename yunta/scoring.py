@@ -3,25 +3,37 @@
 from typing import Optional, Tuple
 
 import numpy as np
+from numpy.typing import ArrayLike
 
-def _euclidean_dist(x: np.ndarray, 
-                    y: Optional[np.ndarray] = None) -> float:
+from .src_speedppi.alphafold.common import protein
+
+def _euclidean_dist(x: ArrayLike, 
+                    y: Optional[v] = None) -> float:
     if y is None:
-        x, y = x[...,np.newaxis], y[...,np.newaxis,:]
+        y = x
+    x, y = x[...,np.newaxis], y[...,np.newaxis,:]
     return np.sqrt(np.sum(np.square(x - y),
                    axis=-1))
 
 
 def _pdockq(avg_interface_plddt: float, n_interface_contacts: int):
 
-    """Calculate the pDockQ."""
+    """Calculate the pDockQ.
+
+    Examples
+    --------
+    >>> _pdockq(.1, 3)
+    1.
+    >>> _pdockq(.9, 100)
+    .8
+    """
 
     x = avg_interface_plddt * np.log10(n_interface_contacts)
     return 0.724 / (1 + np.exp(-0.052 * (x - 152.611))) + 0.018
 
 
-def _score_ppi(cb_coords: np.ndarray, 
-               plddt: np.ndarray,  
+def _score_ppi(cb_coords: ArrayLike, 
+               plddt: ArrayLike,  
                chain_a_length: int,
                contact_radius: float = 8.) -> Tuple[float, float, int]:
     
@@ -33,7 +45,7 @@ def _score_ppi(cb_coords: np.ndarray,
     contacts = np.argwhere(contact_dists <= contact_radius)
 
     if contacts.shape[0] < 1:  # no contacts
-        pdockq, avg_interface_plddt, n_interface_contacts = 0, 0, 0
+        pdockq, avg_interface_plddt, n_interface_contacts = 0., 0., 0
     else:
         #Get plddt per chain
         plddt1, plddt2 = plddt[:len_chain_a], plddt[len_chain_a:]
@@ -47,7 +59,7 @@ def _score_ppi(cb_coords: np.ndarray,
     return pdockq, avg_interface_plddt, n_interface_contacts
 
 
-def score_ppi(unrelaxed_protein, chain_a_length) -> Tuple[float, float, int]:
+def score_ppi(unrelaxed_protein, plddt, chain_a_length: int) -> Tuple[float, float, int]:
 
     """Score the PPI.
 
