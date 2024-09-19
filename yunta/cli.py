@@ -15,29 +15,44 @@ from carabiner.cliutils import clicommand, CLIOption, CLICommand, CLIApp
 
 from .io import write_metrics
 from .plots import plot_matrix
-from .screening import build_evaluate_and_save_model, dca_one_vs_many, dca_many_vs_many, model_many_vs_many, rf2track_one_vs_many
+from .screening import dca_one_vs_many, dca_many_vs_many, model_one_vs_many, model_many_vs_many, rf2track_one_vs_many
 
 def _load_msa_list(*args):
-    args = [flatten(a) for a in args]
-    return ([line.strip() for line in cast(msa, to=TextIOWrapper)] for msa in args)
+    args = [a[0] if isinstance(a, list) else a for a in args]
+    return [flatten([line.strip() for line in msa]) for msa in args]
 
-
-def _plot_results(results, result_interaction, metric, output_dir: str = '.') -> None:
+def _plot_results(results, result_interaction, metric, 
+                  output_dir: str = '.', *args, **kwargs) -> None:
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     filename_prefix = os.path.join(output_dir, metric.ID)
     if hasattr(metric, 'apc'):
         apc = metric.apc
-        filename_prefix += f"{apc=}"    
-    plot_matrix(results, filename_prefix=filename_prefix)
-    plot_matrix(result_interaction, filename_prefix=filename_prefix + ".interaction")
+        filename_prefix += f".{apc=}"    
+    plot_matrix(results, 
+                filename_prefix=filename_prefix, 
+                hline=metric.chain_a_len, 
+                vline=metric.chain_a_len)
+    plot_matrix(result_interaction, 
+                filename_prefix=f"{filename_prefix}.interaction",
+                ylabel=metric.uniprot_id_1, 
+                xlabel=metric.uniprot_id_2)
     return None
 
 
-@clicommand(message="Making RosettaFold-2track prediction with the following parameters.")
+@clicommand(message="Making RosettaFold-2track prediction with the following parameters")
 def _rf2t_single(args: Namespace) -> None:
 
+    if args.list_file:
+        msa1, msa2 = _load_msa_list(args.msa1, args.msa2)
+    else:
+        msa1, msa2 = args.msa1, args.msa2
+
+    print_err(f"Running RF-2t using {msa1} as reference.")
     outputs = rf2track_one_vs_many(
-        msa_file1=args.msa1,
-        msa_file2=args.msa2,
+        msa_file1=msa1,
+        msa_file2=msa2,
+        cpu=args.cpu,
     )
     metrics = [_output[-1] for _output in outputs]
     write_metrics(metrics, 
@@ -53,9 +68,14 @@ def _rf2t_single(args: Namespace) -> None:
 @clicommand(message="Calculating DCA for a pair of MSAs with the following parameters")
 def _dca_single(args: Namespace) -> None:
 
+    if args.list_file:
+        msa1, msa2 = _load_msa_list(args.msa1, args.msa2)
+    else:
+        msa1, msa2 = args.msa1, args.msa2
+
     outputs = dca_one_vs_many(
-        msa_file1=args.msa1,
-        msa_file2=args.msa2,
+        msa_file1=msa1,
+        msa_file2=msa2,
         apc=args.apc,
     )
     metrics = [_output[-1] for _output in outputs]
@@ -73,6 +93,8 @@ def _dca_many_vs_many(args: Namespace) -> None:
 
     if args.list_file:
         msa1, msa2 = _load_msa_list(args.msa1, args.msa2)
+    else:
+        msa1, msa2 = args.msa1, args.msa2
 
     outputs = dca_many_vs_many(
         msa_files1=msa1,
@@ -93,9 +115,14 @@ def _dca_many_vs_many(args: Namespace) -> None:
 @clicommand(message="Modelling one PPI with the following parameters")
 def _af2_single(args: Namespace) -> None:
 
-    metric = build_evaluate_and_save_model(
-        msa_file1=args.msa1,
-        msa_file2=args.msa2,
+    if args.list_file:
+        msa1, msa2 = _load_msa_list(args.msa1, args.msa2)
+    else:
+        msa1, msa2 = args.msa1, args.msa2
+
+    metric = model_one_vs_many(
+        msa_file1=msa1,
+        msa_file2=msa2,
         max_recycles=args.recycles,
         output_dir=args.output,
         param_dir=args.params,
@@ -114,6 +141,8 @@ def _af2_many_vs_many(args: Namespace) -> None:
 
     if args.list_file:
         msa1, msa2 = _load_msa_list(args.msa1, args.msa2)
+    else:
+        msa1, msa2 = args.msa1, args.msa2
 
     metrics = model_many_vs_many(
         msa_files1=msa1,
@@ -123,7 +152,7 @@ def _af2_many_vs_many(args: Namespace) -> None:
         param_dir=args.params,
     )
 
-    output_filename = os.path.join(output_dir, "_all_metrics.csv")
+    output_filename = os.path.join(args.output, "_all_metrics.csv")
     print_err(f"Saving metrics as {output_filename}")
     write_metrics(metrics, 
                   filename=output_filename)
@@ -163,6 +192,9 @@ def main() -> None:
                      type=str,
                      default=None,
                      help='Directory for saving plots. Default: don\'t plot.')
+    cpu = CLIOption('--cpu', '-c', 
+                    action='store_true',
+                    help='Whether to use CPU only. Default: use GPU.')
     output_file = CLIOption('--output', '-o', 
                             default=sys.stdout,
                             type=FileType('w'), 
@@ -171,7 +203,7 @@ def main() -> None:
     apc = CLIOption('--apc', '-a', 
                     action='store_true',
                     help='Whether to use APC correction in DCA. Default: don\'t apply correction.')
-    params = CLIOption('--params', '-p', 
+    params = CLIOption('--params', '-w', 
                        type=str,
                        default=None,
                        help='Path to AlphaFold2 params file (.npz).')
@@ -183,11 +215,11 @@ def main() -> None:
     rf2t_single = CLICommand('rf2t-single', 
                             description='Calculate RF-2track contacts for between one protein and a series of others.',
                             main=_rf2t_single,
-                            options=[inputs, input2, output_file, plot])
+                            options=[inputs, inputs_list2, list_file, output_file, plot, cpu])
     dca_single = CLICommand('dca-single', 
                             description='Calculate DCA for one protein-protein interaction.',
                             main=_dca_single,
-                            options=[inputs, input2, apc, output_file, plot])
+                            options=[inputs, inputs_list2, list_file, output_file, plot, apc])
     dca_many = CLICommand('dca-many', 
                           description='Calculate DCA between two sets of proteins, or all pairs in one set of proteins.',
                           main=_dca_many_vs_many,
@@ -195,15 +227,15 @@ def main() -> None:
     af2_single = CLICommand('af2-single', 
                             description='Model one protein-protein interaction.',
                             main=_af2_single,
-                            options=[inputs, input2, output, params, recycles])
+                            options=[inputs, inputs_list2, list_file, output, params, recycles, plot])
     af2_many = CLICommand('af2-many', 
                           description='Model all interactions between two sets of proteins, or all pairs in one set of proteins.',
                           main=_af2_many_vs_many,
-                          options=[inputs_list, inputs_list2, list_file, output, params, recycles])
+                          options=[inputs_list, inputs_list2, list_file, output, params, recycles, plot])
 
     app = CLIApp("sppid",
                  version=__version__,
-                 description="Screening protein-protein interactions using DCA and AlphaFold2.",
+                 description="Screening protein-protein interactions using DCA, RosettaFold-2track, and AlphaFold2.",
                  commands=[dca_single, dca_many, rf2t_single, af2_single, af2_many])
 
     app.run()

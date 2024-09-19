@@ -102,7 +102,6 @@ with tf.Graph().as_default():
 from typing import Optional, Union
 from io import TextIOWrapper
 import sys
-import string
 
 from carabiner import print_err
 import numpy as np
@@ -158,6 +157,7 @@ def calculate_dca(msa: MSA,
     """
     
     """
+    print_err(f"Devices available:\n{tf.config.list_physical_devices()}")
     if gpu:
         gpus = tf.config.list_physical_devices('GPU')
         if len(gpus) == 0:

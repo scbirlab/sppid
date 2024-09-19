@@ -23,6 +23,7 @@ classifiers = [
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3 :: Only",
 ]
 
@@ -47,11 +48,11 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/scbirlab/sppid"
-"Bug Tracker" = "https://github.com/scbirlab/sppid/issues"
+"Homepage" = "https://github.com/scbirlab/yunta"
+"Bug Tracker" = "https://github.com/scbirlab/yunta/issues"
 
 [project.scripts]  # Optional
-sppid = "sppid.cli:main"
+yunta = "yunta.cli:main"
 
 [tool.setuptools]
 # If there are data files included in your packages that need to be

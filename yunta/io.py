@@ -17,31 +17,6 @@ from pandas import DataFrame
 
 from .structs.pdb import ATMRecord
 from .structs.metrics import ModelMetrics
-from .structs.msa import PairedMSA
-from .src_speedppi.alphafold.data import foldonly, pair_msas
-
-def load_msa_pair(msa_file1: Union[str, TextIOWrapper], 
-                  msa_file2: Optional[Union[str, TextIOWrapper]] = None) -> Tuple[Dict[str, Union[str, int]], int]:
-
-    """Load and join a pair of protein MSAs.
-
-    """
-    paired_msa = PairedMSA.from_file(msa_file1, msa_file2, blocked=True)
-    msa_seqs = paired_msa.sequences()
-    # The msas must be str representations of the blocked+paired MSAs here
-    # Define the data pipeline
-    ids = paired_msa.lines[0].description
-    feature_dict = foldonly.FoldDataPipeline().process(
-        input_sequence=msa_seqs[0],
-        input_description=":".join(sorted(ids)),
-        input_msas=msa_seqs,
-    )
-    # Introduce chain breaks for oligomers
-    feature_dict['residue_index'][len(seq1):] += 200
-    feature_dict['ID'] = "-".join(sorted(ids))
-    feature_dict['id1'], feature_dict['id2'] = ids
-    return feature_dict, paired_msa.chain_a_length
-
 
 def save_design(pdb_info,
                 output_name: str, 
@@ -60,9 +35,9 @@ def save_design(pdb_info,
                 if record.res_no > chainA_length:
                     chain_name = 'B'
                 outline = f"{line[:21]}{chain_name}{line[22:]}"
-                f.writeline(outline)
+                print(outline, file=f)
             except Exception:
-                f.writeline(line)
+                print(line, file=f)
     return None
 
 
@@ -78,7 +53,13 @@ def write_metrics(metrics: Union[Iterable, Any],
         metrics = [metrics]
     if not all(is_dataclass(m) for m in metrics):
         raise TypeError("All metrics must be dataclass objects.")
-    f = cast(filename, to=TextIOWrapper)
+    f = cast(filename, to=TextIOWrapper, mode=mode)
+    if f.name != '<stdout>':
+        dirname = os.path.dirname(f.name)
+        if len(dirname) > 0  and not os.path.exists(dirname):
+            print_err(f"Creating output directory {dirname}")
+            os.makedirs(dirname)
+
     w = DictWriter(f, fieldnames=list(asdict(metrics[0])), delimiter='\t')
     if mode == 'w':
         w.writeheader()
