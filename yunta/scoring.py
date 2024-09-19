@@ -8,7 +8,7 @@ from numpy.typing import ArrayLike
 from .src_speedppi.alphafold.common import protein
 
 def _euclidean_dist(x: ArrayLike, 
-                    y: Optional[v] = None) -> float:
+                    y: Optional[ArrayLike] = None) -> float:
     if y is None:
         y = x
     x, y = x[...,np.newaxis], y[...,np.newaxis,:]
@@ -48,7 +48,7 @@ def _score_ppi(cb_coords: ArrayLike,
         pdockq, avg_interface_plddt, n_interface_contacts = 0., 0., 0
     else:
         #Get plddt per chain
-        plddt1, plddt2 = plddt[:len_chain_a], plddt[len_chain_a:]
+        plddt1, plddt2 = plddt[:chain_a_length], plddt[chain_a_length:]
         #Get the average interface plDDT
         avg_interface_plddt = np.average(np.concatenate([plddt[np.unique(contacts[:,i])] 
                                                          for i, plddt in enumerate((plddt1, plddt2))]))

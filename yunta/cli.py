@@ -128,7 +128,7 @@ def _af2_single(args: Namespace) -> None:
         param_dir=args.params,
     )
 
-    output_filename = os.path.join(output_dir, f"{metric.ID}_metrics.csv")
+    output_filename = os.path.join(args.output_dir, f"{metric.ID}_metrics.csv")
     print_err(f"Saving metrics as {output_filename}")
     write_metrics(metric, 
                   filename=output_filename)

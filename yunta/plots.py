@@ -52,4 +52,4 @@ def plot_dca(dca: np.ndarray,
     if filename_prefix is not None:
         filename_prefix += "_dca"
 
-    return _plot_matrix(dca, filename_prefix=filename_prefix, format=format, dpi=dpi)
+    return plot_matrix(dca, filename_prefix=filename_prefix, format=format, dpi=dpi)
