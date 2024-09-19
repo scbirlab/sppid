@@ -1,17 +1,16 @@
 [project]
-name = "sppid"
+name = "yunta"
 version = "0.0.1"
 authors = [
   { name="Eachan Johnson", email="eachan.johnson@crick.ac.uk" },
 ]
-description = "Predicting protein-protein interactions using AlphaFold2."
+description = "Predicting protein-protein interactions."
 readme = "README.md"
 requires-python = ">=3.8"
 license = {file = "LICENSE"}
-keywords = ["science", "biology", "systems biology", "biochemistry", "machine learning", "analysis", "deep learning", "alphafold2"]
+keywords = ["science", "biology", "systems biology", "biochemistry", "machine learning", "analysis", "deep learning", "alphafold2", "rosettafold"]
 
 classifiers = [  
-  
   "Development Status :: 3 - Alpha",
 
   # Indicate who your project is intended for
@@ -34,10 +33,16 @@ dependencies = [
   "carabiner-tools[mpl]",
   "dm-haiku==0.0.12",
   "dm-tree",
-  "openpyxl==3.1.0", 
+  "jax[cuda12]",
   "ml-collections==0.1.0",
+  "openpyxl==3.1.0", 
   "pandas",
-  "tensorflow-cpu==2.16.1",
+  #"rf2t-micro",
+  "requests",
+  "tensorflow==2.17",
+  "tensorrt",
+  "torch>=2.3",
+  "torchvision",
   "tqdm"
 ]
 
