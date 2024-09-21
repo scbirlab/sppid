@@ -36,6 +36,7 @@ from typing import List
 import collections
 import jax.numpy as jnp
 import tree
+
 from . import quat_affine
 
 # Array of 3-component vectors, stored as individual array for

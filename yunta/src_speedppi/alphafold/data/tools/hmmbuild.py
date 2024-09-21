@@ -19,7 +19,7 @@ import re
 import subprocess
 
 from absl import logging
-from alphafold.data.tools import utils
+from . import utils
 # Internal import (7716).
 
 

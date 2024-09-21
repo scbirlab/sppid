@@ -23,7 +23,7 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 import tree
 
-from ..common import confidence
+from .. import confidence
 from . import features, modules
 
 

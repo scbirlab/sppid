@@ -39,7 +39,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 
-from ..common import residue_constants
+from .. import residue_constants
 from . import r3, utils
 
 
