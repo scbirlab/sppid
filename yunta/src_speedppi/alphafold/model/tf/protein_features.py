@@ -17,7 +17,7 @@ from typing import Dict, Optional, Sequence, Tuple, Union
 import enum
 import tensorflow.compat.v1 as tf
 
-from ...common import residue_constants
+from ... import residue_constants
 
 # Type aliases.
 FeaturesMetadata = Dict[str, Tuple[tf.dtypes.DType, Sequence[Union[str, int]]]]

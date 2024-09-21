@@ -17,7 +17,7 @@
 import numpy as np
 import tensorflow.compat.v1 as tf
 
-from ...common import residue_constants
+from ... import residue_constants
 from . import shape_helpers, shape_placeholders, utils
 
 # Pylint gets confused by the curry1 decorator because it changes the number
