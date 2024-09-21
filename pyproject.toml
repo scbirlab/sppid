@@ -4,7 +4,7 @@ version = "0.0.1"
 authors = [
   { name="Eachan Johnson", email="eachan.johnson@crick.ac.uk" },
 ]
-description = "Predicting protein-protein interactions."
+description = "Predicting protein-protein interactions and structures from multiple sequence alignments."
 readme = "README.md"
 requires-python = ">=3.8"
 license = {file = "LICENSE"}
@@ -36,7 +36,7 @@ dependencies = [
   "ml-collections==0.1.0",
   "openpyxl==3.1.0", 
   "pandas",
-  #"rf2t-micro",
+  "rf2t-micro",
   "requests",
   "tensorflow==2.17",
   "tensorrt",
@@ -55,7 +55,6 @@ yunta = "yunta.cli:main"
 [tool.setuptools]
 # If there are data files included in your packages that need to be
 # installed, specify them here.
-# package-data = {"sppid" = "data/params/params_model_1.npz"}
 
 [build-system]
 # These are the assumed default build requirements from pip:
