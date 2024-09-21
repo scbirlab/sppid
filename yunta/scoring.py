@@ -23,7 +23,7 @@ def _pdockq(avg_interface_plddt: float, n_interface_contacts: int):
     Examples
     --------
     >>> _pdockq(.1, 3)
-    1.
+    0.018259536451737016
     >>> _pdockq(.9, 100)
     .8
     """
