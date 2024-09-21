@@ -15,7 +15,7 @@ from carabiner.cast import cast
 import numpy as np
 from pandas import DataFrame
 
-from .structs.pdb import ATMRecord
+from .structs.pdb_structs import ATMRecord
 from .structs.metrics import ModelMetrics
 
 def save_design(pdb_info,
