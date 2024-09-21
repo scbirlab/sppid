@@ -15,7 +15,13 @@ from carabiner.cliutils import clicommand, CLIOption, CLICommand, CLIApp
 
 from .io import write_metrics
 from .plots import plot_matrix
-from .screening import dca_one_vs_many, dca_many_vs_many, model_one_vs_many, model_many_vs_many, rf2track_one_vs_many
+from .screening import (
+    dca_one_vs_many, 
+    dca_many_vs_many, 
+    model_one_vs_many, 
+    model_many_vs_many, 
+    rf2track_one_vs_many,
+)
 
 def _load_msa_list(*args):
     args = [a[0] if isinstance(a, list) else a for a in args]
