@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 import numpy as np
 from numpy.typing import ArrayLike
 
-from .src_speedppi.alphafold.common import protein
+from .src_speedppi.alphafold import protein
 
 def _euclidean_dist(x: ArrayLike, 
                     y: Optional[ArrayLike] = None) -> float:

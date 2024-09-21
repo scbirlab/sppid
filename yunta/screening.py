@@ -18,7 +18,7 @@ from tqdm.auto import tqdm
 from .io import save_design
 from .modelling import make_model_runner
 from .scoring import score_ppi
-from .src_speedppi.alphafold.common import protein, residue_constants
+from .src_speedppi.alphafold import protein, residue_constants
 from .src_speedppi.alphafold.data import foldonly
 from .structs.metrics import DCAMetrics, ModelMetrics, RF2TMetrics
 from .structs.msa import MSA, PairedMSA

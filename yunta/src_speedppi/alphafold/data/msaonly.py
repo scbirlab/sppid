@@ -22,7 +22,7 @@ from absl import logging
 import numpy as np
 
 from .. import residue_constants
-from . import parsers, residue_constants, templates
+from . import parsers, templates
 from .tools import hhblits, hhsearch, jackhmmer
 
 # Internal import (7716).
