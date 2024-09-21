@@ -23,10 +23,18 @@ hk.vmap.require_split_rng = False
 import jax
 import jax.numpy as jnp
 
-from ..common import residue_constants
-from . import (all_atom, common_modules, folding, 
-               layer_stack, lddt, mapping, prng, 
-               quat_affine, utils)
+from .. import residue_constants
+from . import (
+  all_atom, 
+  common_modules, 
+  folding, 
+  layer_stack, 
+  lddt, 
+  mapping, 
+  prng, 
+  quat_affine, 
+  utils,
+)
 
 
 def softmax_cross_entropy(logits, labels):

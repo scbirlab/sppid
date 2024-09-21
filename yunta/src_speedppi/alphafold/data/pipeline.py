@@ -20,7 +20,7 @@ import os
 from absl import logging
 import numpy as np
 
-from ..common import residue_constants
+from .. import residue_constants
 from . import parsers, templates
 from .tools import hhblits, hhsearch, jackhmmer
 

@@ -21,13 +21,10 @@ from absl import logging
 import numpy as np
 import pdb
 
-from ..common import residue_constants
+from .. import residue_constants
 from . import parsers
-from . import templates
-from .templates import TemplateSearchResult
-from .tools import hhblits
+from .templates import TemplateHitFeaturizer, TemplateSearchResult
 from .tools import hhsearch
-from .tools import jackhmmer
 
 FeatureDict = Mapping[str, np.ndarray]
 
@@ -91,7 +88,7 @@ class FoldDataPipeline:
   """Runs the alignment tools and assembles the input features."""
 
   def __init__(self, pdb70_database_path: str = None,
-               template_featurizer: templates.TemplateHitFeaturizer = None):
+               template_featurizer: TemplateHitFeaturizer = None):
     if template_featurizer:
       self.template_featurizer = template_featurizer
 

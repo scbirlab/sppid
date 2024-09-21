@@ -24,7 +24,7 @@ import re
 from absl import logging
 import numpy as np
 
-from ..common import residue_constants
+from .. import residue_constants
 from . import mmcif_parsing
 from . import parsers
 from .tools import kalign

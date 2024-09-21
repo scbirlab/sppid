@@ -23,13 +23,8 @@ import jax.numpy as jnp
 import ml_collections
 import numpy as np
 
-from ..common import residue_constants
-from . import all_atom
-from . import common_modules
-from . import prng
-from . import quat_affine
-from . import r3
-from . import utils
+from .. import residue_constants
+from . import all_atom, common_modules, prng, quat_affine, r3, utils
 
 
 def squared_difference(x, y):
