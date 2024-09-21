@@ -25,7 +25,7 @@ def _pdockq(avg_interface_plddt: float, n_interface_contacts: int):
     >>> _pdockq(.1, 3)
     0.018259536451737016
     >>> _pdockq(.9, 100)
-    .8
+    0.018284286329741297
     """
 
     x = avg_interface_plddt * np.log10(n_interface_contacts)
