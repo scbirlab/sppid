@@ -23,6 +23,7 @@ class ShapeTest(tf.test.TestCase):
 
   def test_shape_list(self):
     """Test that shape_list can allow for reshaping to dynamic shapes."""
+    tf.disable_eager_execution()
     a = tf.zeros([10, 4, 4, 2])
     p = tf.placeholder(tf.float32, shape=[None, None, 1, 4, 4])
     shape_dyn = shape_helpers.shape_list(p)[:2] + [4, 4]
