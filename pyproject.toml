@@ -32,7 +32,7 @@ dependencies = [
   "carabiner-tools[mpl,pd]",
   "dm-haiku==0.0.12",
   "dm-tree",
-  "jax[cuda12]",
+  "jax",
   "ml-collections==0.1.0",
   "openpyxl==3.1.0", 
   "rf2t-micro",
@@ -47,6 +47,7 @@ dependencies = [
 [project.optional-dependencies]
 cuda12 = ["jax[cuda12]"]
 cuda12_local = ["jax[cuda12_local]"]
+cuda11 = ["jax[cuda11]"]
 
 [project.urls]
 "Homepage" = "https://github.com/scbirlab/yunta"
