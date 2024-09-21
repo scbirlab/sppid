@@ -44,6 +44,10 @@ dependencies = [
   "tqdm"
 ]
 
+[project.optional-dependencies]
+cuda12 = ["jax[cuda12]"]
+cuda12_local = ["jax[cuda12_local]"]
+
 [project.urls]
 "Homepage" = "https://github.com/scbirlab/yunta"
 "Bug Tracker" = "https://github.com/scbirlab/yunta/issues"
