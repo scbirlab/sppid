@@ -44,4 +44,4 @@ jobs:
       if: ${{ always() }}
     - name: Test with scriots
       run: |
-        bash test/scripts/test.sh
+        bash test/scripts/test.sh gh
