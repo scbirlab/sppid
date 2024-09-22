@@ -1,6 +1,6 @@
 """Get model weights for rf2t-micro."""
 
-from typing import Iterable, Optional
+from typing import Optional
 
 import os
 import tarfile
@@ -11,8 +11,10 @@ from tqdm.auto import tqdm
 
 _WEIGHTS_URL = "https://storage.googleapis.com/alphafold/alphafold_params_2021-07-14.tar"
 
-def get_model_weights(model_name: Optional[str] = None,
-                      path: Optional[str] = None) -> str:
+def get_model_weights(
+    model_name: Optional[str] = None,
+    path: Optional[str] = None
+) -> str:
 
     """Get the model weights filename.
     
@@ -24,9 +26,9 @@ def get_model_weights(model_name: Optional[str] = None,
     if model_name is None:
         model_name = "model_1"
 
-    weight_dir = os.path.join(os.path.realpath(path), ".weights", "af2-sppid", "params")
+    weight_dir = os.path.join(os.path.realpath(path), ".weights", "af2-yunta", "params")
     weight_filename = os.path.join(weight_dir, f"params_{model_name}.npz")
-    files_to_keep = (os.path.basename(weight_filename), "LICENSE")
+    files_to_keep = (os.path.join(".", os.path.basename(weight_filename)), "LICENSE")
 
     if not os.path.exists(weight_filename):
         print_err(f"Weights file {weight_filename} does not exist. Downloading...")
@@ -47,15 +49,18 @@ def get_model_weights(model_name: Optional[str] = None,
             raise e
         with tarfile.open(temp_file) as tar:
             print_err(f"Extracting weights from {temp_file} to {weight_dir}...")
-            tar.extractall(path=weight_dir, members=files_to_keep, filter='data')
-        tardir = os.path.join(weight_dir, "weights")
+            tar.extractall(
+                path=weight_dir, 
+                members=files_to_keep, 
+                filter='data',
+            )
+        tardir = weight_dir
         os.remove(temp_file)
         for filename in files_to_keep:
             source = os.path.join(tardir, filename)
             destination = os.path.join(weight_dir, filename)
             print_err(f"Moving {source} to {destination}.")
             os.rename(source, destination)
-        os.rmdir(tardir)
 
     print_err(f"Model weights located at {weight_dir}.")        
     return os.path.dirname(weight_dir)  # AF2 expects the parent dir of "params" dir
