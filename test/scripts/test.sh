@@ -9,7 +9,7 @@ INPUTB=(test/inputs/CAPZA_YEAST.a3m test/inputs/WWM1_YEAST.a3m)
 
 FILE1=test/outputs/file1.txt
 FILE2=test/outputs/file2.txt
-mkdir -p $(basename $FILE1)
+mkdir -p $(dirname $FILE1)
 echo $INPUT1 > $FILE1
 echo "${INPUTB[@]}" | tr ' ' $'\n' > $FILE2
 
@@ -42,6 +42,7 @@ then
     && touch test/outputs/rf2t-many.success
     yunta rf2t-single $FILE1 -2 $FILE2 -o test/outputs/rf2t-many-list.tsv --plot test/outputs/rf2t-many-list --list-file \
     && touch test/outputs/rf2t-many-list.success
+
     if [ $(diff test/outputs/rf2t-many-list.tsv test/outputs/rf2t-many.tsv | wc -l) != 0 ]
     then 
         >&2 echo "ERROR: List and basic inputs gave different outputs!"
