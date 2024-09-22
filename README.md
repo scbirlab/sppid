@@ -49,6 +49,18 @@ Obtaining and setting up `yunta` is easy.
 $ pip install git+https://github.com/scbirlab/yunta
 ```
 
+If you want to enable GPU, use
+
+```bash
+$ pip install git+https://github.com/scbirlab/yunta[cuda12]
+```
+
+If you want to use a local CUDA installation instead, use
+
+```bash
+$ pip install git+https://github.com/scbirlab/yunta[cuda12_local]
+```
+
 Using the embedded model requires using the [RoseTTAFold](https://github.com/RosettaCommons/RoseTTAFold)-2track and AlphaFold2 weights. These are automatically downloaded, but by using `yunta` you agree that the trained weights for RoseTTAFold are made available for non-commercial use only under the terms of the [Rosetta-DL Software license](https://files.ipd.uw.edu/pub/RoseTTAFold/Rosetta-DL_LICENSE.txt) and AlphaFold2's pretrained parameters fall under the [CC BY 4.0 license](https://creativecommons.org/licenses/by/4.0/legalcode).
 
 ## Credit
