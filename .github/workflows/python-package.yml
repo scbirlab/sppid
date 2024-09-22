@@ -44,4 +44,5 @@ jobs:
       if: ${{ always() }}
     - name: Test with scripts
       run: |
+        echo $(pwd)
         cd yunta && bash test/scripts/test.sh
