@@ -1,6 +1,6 @@
 """Command-line interface for sppid."""
 
-__version__ = '0.0.1'
+__version__ = '0.0.1.post1'
 
 from typing import Any, Mapping, Optional, Tuple, Union
 
