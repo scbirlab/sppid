@@ -49,4 +49,4 @@ jobs:
         ls
         ls test
         ls test/scripts
-        bash test/scripts/test.sh
+        bash test/scripts/test.sh gh
