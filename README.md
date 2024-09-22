@@ -32,7 +32,7 @@ Rough timings for a pair of ~200 amino-acid proteins (_S. cerevisiae_ DHFR and W
 
 <img src="docs/source/_static/P07807-P43582.apc=True.png" alt="" width="200">
 
-- **RF2t**: 10 seconds
+- **RosettaFold-2track**: 10 seconds
 
 <img src="docs/source/_static/P07807-P43582-rf2t.png" alt="" width="200">
 
@@ -40,6 +40,7 @@ Rough timings for a pair of ~200 amino-acid proteins (_S. cerevisiae_ DHFR and W
 
 <img src="docs/source/_static/P07807-P43582-af2.png" alt="" width="200">
 
+Note that these times will increase quadratically with the total length of the proteins.
 
 ## Installation
 
