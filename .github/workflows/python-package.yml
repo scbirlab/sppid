@@ -44,8 +44,10 @@ jobs:
       if: ${{ always() }}
     - name: Test with scripts
       run: |
+        set -x
+        ls
         echo $(pwd)
-        cd ..
+        cd ../..
         echo $(pwd)
         ls
         ls test
