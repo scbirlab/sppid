@@ -45,4 +45,8 @@ jobs:
     - name: Test with scripts
       run: |
         echo $(pwd)
-        cd .. && bash test/scripts/test.sh
+        cd ..
+        echo $(pwd)
+        ls
+        ls test
+        bash test/scripts/test.sh
