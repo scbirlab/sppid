@@ -42,6 +42,6 @@ jobs:
           path: junit/test-results-${{ matrix.python-version }}.xml
       # Use always() to always run this step to publish test results when there are test failures
       if: ${{ always() }}
-    - name: Test with scriots
+    - name: Test with scripts
       run: |
-        bash test/scripts/test.sh gh
+        bash yunta/test/scripts/test.sh gh
