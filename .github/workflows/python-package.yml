@@ -45,4 +45,4 @@ jobs:
     - name: Test with scripts
       run: |
         echo $(pwd)
-        cd yunta && bash test/scripts/test.sh
+        cd .. && bash test/scripts/test.sh
