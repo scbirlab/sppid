@@ -28,7 +28,7 @@ classifiers = [
 dependencies = [ 
   "absl-py",
   "bioino",
-  "biopython==1.79",
+  "biopython"
   "carabiner-tools[mpl,pd]",
   "dm-haiku==0.0.12",
   "dm-tree",
