@@ -9,6 +9,7 @@ INPUTB=(test/inputs/CAPZA_YEAST.a3m test/inputs/WWM1_YEAST.a3m)
 
 FILE1=test/outputs/file1.txt
 FILE2=test/outputs/file2.txt
+mkdir -p $(basename $FILE1)
 echo $INPUT1 > $FILE1
 echo "${INPUTB[@]}" | tr ' ' $'\n' > $FILE2
 
